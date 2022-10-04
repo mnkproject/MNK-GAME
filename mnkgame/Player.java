@@ -31,6 +31,9 @@ import java.util.Random;
 public class Player implements MNKPlayer {
     private Random rand;
     private int TIMEOUT;
+    private int M, N, K;
+    private boolean first;
+    private int timeout_in_secs;
 
     /**
      * Default empty constructor
@@ -52,86 +55,29 @@ public class Player implements MNKPlayer {
          * catch(Exception e) {
          * }
          */
+        this.M = M;
+        this.N = N;
+        this.K = K;
+        this.first = first;
+        this.timeout_in_secs = timeout_in_secs;
     }
 
     // AlphaBeta algorithm
     public int AlphaBeta(MNKCell[] FC, MNKCell[] MC, boolean isMaximizingPlayer, int depth, int alpha, int beta) {
-        // If the game is over or the depth is 0, return the heuristic value
-        if (depth == 0 || FC.length == 0) {
-            // return Heuristic(FC, MC);
+        int eval = 0;
+        // if marked cells are equal to 0 then randomly choose a cell
+
+        return eval;
+    }
+
+    public int eval(MNKCell cell, MNKCell[] FC, MNKCell[] MC) {
+        if (MC.length == 0) {
             return 0;
         }
 
-        int bestValue = 0;
+        int evaluation = rand.nextInt(FC.length);
 
-        // If it is the maximizing player
-        if (isMaximizingPlayer) {
-            // The best value is set to the minimum value
-            bestValue = Integer.MIN_VALUE;
-            // For each possible move
-            for (MNKCell cell : FC) {
-                // We make the move
-                MNKCell[] newFC = new MNKCell[FC.length - 1];
-                int i = 0;
-                for (MNKCell c : FC) {
-                    if (c != cell) {
-                        newFC[i] = c;
-                        i++;
-                    }
-                }
-                MNKCell[] newMC = new MNKCell[MC.length + 1];
-                i = 0;
-                for (MNKCell c : MC) {
-                    newMC[i] = c;
-                    i++;
-                }
-                newMC[i] = cell;
-                // We call AlphaBeta on the new state
-                int value = AlphaBeta(newFC, newMC, false, depth - 1, alpha, beta);
-                // We update the best value
-                bestValue = Math.max(bestValue, value);
-                // We update alpha
-                alpha = Math.max(alpha, bestValue);
-                // If beta is less than alpha, we prune the rest of the tree
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-        } else {
-            // The best value is set to the minimum value
-            bestValue = Integer.MIN_VALUE;
-            // For each possible move
-            for (MNKCell cell : FC) {
-                // We make the move
-                MNKCell[] newFC = new MNKCell[FC.length - 1];
-                int i = 0;
-                for (MNKCell c : FC) {
-                    if (c != cell) {
-                        newFC[i] = c;
-                        i++;
-                    }
-                }
-                MNKCell[] newMC = new MNKCell[MC.length + 1];
-                i = 0;
-                for (MNKCell c : MC) {
-                    newMC[i] = c;
-                    i++;
-                }
-                newMC[i] = cell;
-                // We call AlphaBeta on the new state
-                int value = AlphaBeta(newFC, newMC, true, depth - 1, alpha, beta);
-                // We update the best value
-                bestValue = Math.min(bestValue, value);
-                // We update alpha
-                alpha = Math.min(alpha, bestValue);
-                // If beta is less than alpha, we prune the rest of the tree
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-        }
-
-        return bestValue;
+        return evaluation;
 
     }
 
@@ -148,10 +94,20 @@ public class Player implements MNKPlayer {
          * }
          */
 
+        // print FC
+        /*
+         * System.out.println("FC: ");
+         * for (int i = 0; i < FC.length; i++) {
+         * System.out.println(FC[i]);
+         * }
+         */
+
         // Assign value to each cell
         HashMap<MNKCell, Integer> cellValues = new HashMap<MNKCell, Integer>();
         for (MNKCell cell : FC) {
-            cellValues.put(cell, AlphaBeta(FC, MC, true, 10, Integer.MIN_VALUE, Integer.MAX_VALUE));
+            // cellValues.put(cell, AlphaBeta(FC, MC, false, 10, Integer.MIN_VALUE,
+            // Integer.MAX_VALUE));
+            cellValues.put(cell, eval(cell, FC, MC));
         }
 
         // Select cell with highest value
@@ -167,6 +123,7 @@ public class Player implements MNKPlayer {
             System.out.println("Cell: " + cell + " Value: " + cellValues.get(cell));
         }
 
+        System.out.println("Selected cell: " + bestCell);
         return bestCell;
 
         // return FC[rand.nextInt(FC.length)];
