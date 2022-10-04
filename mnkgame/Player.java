@@ -27,48 +27,49 @@ import java.util.Random;
 /**
  * Totally random software player.
  */
-public class Player  implements MNKPlayer {
-	private Random rand;
-	private int TIMEOUT;
+public class Player implements MNKPlayer {
+    private Random rand;
+    private int TIMEOUT;
 
-	/**
-   * Default empty constructor
-   */
-	public Player() {
-	}
+    /**
+     * Default empty constructor
+     */
+    public Player() {
+    }
 
-	public void initPlayer(int M, int N, int K, boolean first, int timeout_in_secs) {
-		// New random seed for each game
-		rand    = new Random(System.currentTimeMillis()); 
-		// Save the timeout for testing purposes
-		TIMEOUT = timeout_in_secs;
-		
-		// Uncomment to chech the initialization timeout
-		/* 
-		try {
-			Thread.sleep(1000*2*TIMEOUT);
-		} 
-		catch(Exception e) {
-		}
-		*/
-	}
+    public void initPlayer(int M, int N, int K, boolean first, int timeout_in_secs) {
+        // New random seed for each game
+        rand = new Random(System.currentTimeMillis());
+        // Save the timeout for testing purposes
+        TIMEOUT = timeout_in_secs;
 
-	/**
-   * Selects a random cell in <code>FC</code>
-   */
-	public MNKCell selectCell(MNKCell[] FC, MNKCell[] MC) {
-		// Uncomment to chech the move timeout
-		/* 
-		try {
-			Thread.sleep(1000*2*TIMEOUT);
-		} 
-		catch(Exception e) {
-		}
-		*/
-		return FC[rand.nextInt(FC.length)];
-	}
+        // Uncomment to chech the initialization timeout
+        /*
+         * try {
+         * Thread.sleep(1000*2*TIMEOUT);
+         * }
+         * catch(Exception e) {
+         * }
+         */
+    }
 
-	public String playerName() {
-		return "Giocatore";
-	}
+    /**
+     * Selects a random cell in <code>FC</code>
+     */
+    public MNKCell selectCell(MNKCell[] FC, MNKCell[] MC) {
+        // Uncomment to chech the move timeout
+        /*
+         * try {
+         * Thread.sleep(1000*2*TIMEOUT);
+         * }
+         * catch(Exception e) {
+         * }
+         */
+
+        return FC[rand.nextInt(FC.length)];
+    }
+
+    public String playerName() {
+        return "Giocatore";
+    }
 }
