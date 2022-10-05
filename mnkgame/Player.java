@@ -24,6 +24,7 @@ package mnkgame;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Stack;
 
 /**
  * Totally random software player.
@@ -102,6 +103,16 @@ public class Player implements MNKPlayer {
          * }
          */
 
+        // Check if it is the first move
+        /*  if (MC.length == 0) {
+            // Place the first move in the center of the board
+            System.out.println("First move: " + FC.length / 2);
+            return FC[FC.length / 2];
+        }*/
+
+        //Order FC by FC[i].i
+        //**TODO^^
+
         // Assign value to each cell
         HashMap<MNKCell, Integer> cellValues = new HashMap<MNKCell, Integer>();
         for (MNKCell cell : FC) {
@@ -120,7 +131,7 @@ public class Player implements MNKPlayer {
             }
 
             // print cell values
-            System.out.println("Cell: " + cell + " Value: " + cellValues.get(cell));
+             System.out.println("Cell: " + cell + " Value: " + cellValues.get(cell));
         }
 
         System.out.println("Selected cell: " + bestCell);
