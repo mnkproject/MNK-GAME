@@ -80,7 +80,7 @@ public class Player implements MNKPlayer {
         this.first = first;
         this.timeout_in_secs = timeout_in_secs;
 
-        myBoard = new Board(M, N, K);
+        myBoard = new Board(M, N, K);//TODO cerca di capire perche myBoard non è visibile
     }
 
     // AlphaBeta algorithm
