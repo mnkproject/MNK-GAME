@@ -32,11 +32,29 @@ import java.util.Stack;
 public class Player implements MNKPlayer {
     private Random rand;
     private int TIMEOUT;
-    private int M, N, K;
+    private int M, N, K, minNM;
     private boolean first;
     private int timeout_in_secs;
+    private Board board;
 
-    /**
+    // Board
+    private class Board extends MNKBoard {
+        public Board(int M, int N, int K) {
+            super(M, N, K);
+        }
+
+        // get cell state at position (i,j)
+        public MNKCellState getCellState(int i, int j) {
+            return super.B[i][j];
+        }
+
+        // set cell state
+        public void setCellState(int i, int j, MNKCellState state) {
+            super.B[i][j] = state;
+        }
+    }
+
+    /*
      * Default empty constructor
      */
     public Player() {
@@ -61,6 +79,8 @@ public class Player implements MNKPlayer {
         this.K = K;
         this.first = first;
         this.timeout_in_secs = timeout_in_secs;
+
+        myBoard = new Board(M, N, K);
     }
 
     // AlphaBeta algorithm
@@ -69,6 +89,40 @@ public class Player implements MNKPlayer {
         // if marked cells are equal to 0 then randomly choose a cell
 
         return eval;
+    }
+
+    // minimax algorithm
+    public int miniMax(MNKCell[] FC, MNKCell[] MC, boolean isMaximizingPlayer, int depth) {
+
+        if (isMaximizingPlayer) {
+            int bestScore = Integer.MIN_VALUE;
+            for (int i = 0; i < this.M; i++) {
+                for (int j = 0; j < this.N; j++) {
+                    // check if the cell is empty
+                    if (this.B[i][j] myBoard == MNKCellState.FREE) {
+                        this.B[i][j] = MNKCellState.P1;// mark the cell as P1
+                        int score = miniMax(FC, MC, false, depth + 1);
+                        this.B[i][j] = MNKCellState.FREE;// unmark the cell
+                        bestScore = Math.max(score, bestScore);// get the best score
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            int bestScore = Integer.MAX_VALUE;
+            for (int i = 0; i < this.M; i++) {
+                for (int j = 0; j < this.N; j++) {
+                    // check if the cell is empty
+                    if (this.B[i][j] == MNKCellState.FREE) {
+                        this.B[i][j] = MNKCellState.P2;// mark the cell as P2
+                        int score = miniMax(FC, MC, true, depth + 1);
+                        this.B[i][j] = MNKCellState.FREE;// unmark the cell
+                        bestScore = Math.min(score, bestScore);// get the best score
+                    }
+                }
+            }
+            return bestScore;
+        }
     }
 
     public int eval(MNKCell cell, MNKCell[] FC, MNKCell[] MC) {
@@ -104,41 +158,73 @@ public class Player implements MNKPlayer {
          */
 
         // Check if it is the first move
-        /*  if (MC.length == 0) {
-            // Place the first move in the center of the board
-            System.out.println("First move: " + FC.length / 2);
-            return FC[FC.length / 2];
-        }*/
+        /*
+         * if (MC.length == 0) {
+         * // Place the first move in the center of the board
+         * System.out.println("First move: " + FC.length / 2);
+         * return FC[FC.length / 2];
+         * }
+         */
 
-        //Order FC by FC[i].i
-        //**TODO^^
+        // Order FC by FC[i].i
+        // **TODO^^
 
         // Assign value to each cell
-        HashMap<MNKCell, Integer> cellValues = new HashMap<MNKCell, Integer>();
-        for (MNKCell cell : FC) {
-            // cellValues.put(cell, AlphaBeta(FC, MC, false, 10, Integer.MIN_VALUE,
-            // Integer.MAX_VALUE));
-            cellValues.put(cell, eval(cell, FC, MC));
-        }
+        /*
+         * HashMap<MNKCell, Integer> cellValues = new HashMap<MNKCell, Integer>();
+         * for (MNKCell cell : FC) {
+         * // cellValues.put(cell, AlphaBeta(FC, MC, false, 10, Integer.MIN_VALUE,
+         * // Integer.MAX_VALUE));
+         * cellValues.put(cell, eval(cell, FC, MC));
+         * }
+         * 
+         * // Select cell with highest value
+         * MNKCell bestCell = null;
+         * int bestValue = Integer.MIN_VALUE;
+         * for (MNKCell cell : FC) {
+         * if (cellValues.get(cell) > bestValue) {
+         * bestCell = cell;
+         * bestValue = cellValues.get(cell);
+         * }
+         * 
+         * // print cell values
+         * System.out.println("Cell: " + cell + " Value: " + cellValues.get(cell));
+         * }
+         */
 
-        // Select cell with highest value
-        MNKCell bestCell = null;
-        int bestValue = Integer.MIN_VALUE;
-        for (MNKCell cell : FC) {
-            if (cellValues.get(cell) > bestValue) {
-                bestCell = cell;
-                bestValue = cellValues.get(cell);
+        // if marked cells are equal to 0 then randomly choose a cell
+        if (MC.length == 0) {
+            return FC[rand.nextInt(FC.length)];
+        }
+        // else use minimax algorithm
+        else {
+            // create a hashmap to store the scores of each cell
+            HashMap<MNKCell, Integer> scores = new HashMap<MNKCell, Integer>();
+            // get the first cell
+            MNKCell bestCell = FC[0];
+            // get the first cell's score
+            scores.put(bestCell, miniMax(FC, MC, true, 0));
+            // iterate through the rest of the cells
+            for (MNKCell cell : FC) {
+                // get the current score
+                int currentScore = miniMax(FC, MC, true, 0);
+                // if the current score is greater than the previous score
+                if (currentScore > scores.get(bestCell)) {
+                    // set the current cell as the best cell
+                    bestCell = cell;
+                    // update the score
+                    scores.replace(bestCell, currentScore);
+                }
             }
+            // return the best cell
+            return bestCell;
 
-            // print cell values
-             System.out.println("Cell: " + cell + " Value: " + cellValues.get(cell));
+            // System.out.println("Selected cell: " + bestCell);
+            // return bestCell;
+
+            // return FC[rand.nextInt(FC.length)];
+
         }
-
-        System.out.println("Selected cell: " + bestCell);
-        return bestCell;
-
-        // return FC[rand.nextInt(FC.length)];
-
     }
 
     public String playerName() {
