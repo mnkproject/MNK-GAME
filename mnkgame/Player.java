@@ -35,7 +35,7 @@ public class Player implements MNKPlayer {
     private int M, N, K, minNM;
     private boolean first;
     private int timeout_in_secs;
-    private Board board;
+    private Board myBoard;
 
     // Board
     private class Board extends MNKBoard {
@@ -80,7 +80,7 @@ public class Player implements MNKPlayer {
         this.first = first;
         this.timeout_in_secs = timeout_in_secs;
 
-        myBoard = new Board(M, N, K);//TODO cerca di capire perche myBoard non è visibile
+        this.myBoard = new Board(M, N, K);
     }
 
     // AlphaBeta algorithm
@@ -99,10 +99,10 @@ public class Player implements MNKPlayer {
             for (int i = 0; i < this.M; i++) {
                 for (int j = 0; j < this.N; j++) {
                     // check if the cell is empty
-                    if (this.B[i][j] myBoard == MNKCellState.FREE) {
-                        this.B[i][j] = MNKCellState.P1;// mark the cell as P1
+                    if (myBoard.B[i][j] == MNKCellState.FREE) {
+                        myBoard.B[i][j] = MNKCellState.P1;// mark the cell as P1
                         int score = miniMax(FC, MC, false, depth + 1);
-                        this.B[i][j] = MNKCellState.FREE;// unmark the cell
+                        myBoard.B[i][j] = MNKCellState.FREE;// unmark the cell
                         bestScore = Math.max(score, bestScore);// get the best score
                     }
                 }
@@ -113,10 +113,10 @@ public class Player implements MNKPlayer {
             for (int i = 0; i < this.M; i++) {
                 for (int j = 0; j < this.N; j++) {
                     // check if the cell is empty
-                    if (this.B[i][j] == MNKCellState.FREE) {
-                        this.B[i][j] = MNKCellState.P2;// mark the cell as P2
+                    if (myBoard.B[i][j] == MNKCellState.FREE) {
+                        myBoard.B[i][j] = MNKCellState.P2;// mark the cell as P2
                         int score = miniMax(FC, MC, true, depth + 1);
-                        this.B[i][j] = MNKCellState.FREE;// unmark the cell
+                        myBoard.B[i][j] = MNKCellState.FREE;// unmark the cell
                         bestScore = Math.min(score, bestScore);// get the best score
                     }
                 }
@@ -191,6 +191,19 @@ public class Player implements MNKPlayer {
          * System.out.println("Cell: " + cell + " Value: " + cellValues.get(cell));
          * }
          */
+
+         
+        // FIXME: la board non è aggiornata con le mosse dei due giocatori
+
+
+        System.out.println(myBoard.M + " " + myBoard.N + " " + myBoard.K);
+        // print myBoard
+        for (int i = 0; i < myBoard.M; i++) {
+            for (int j = 0; j < myBoard.N; j++) {
+                System.out.print(myBoard.B[i][j] + " ");
+            }
+            System.out.println();
+        }
 
         // if marked cells are equal to 0 then randomly choose a cell
         if (MC.length == 0) {
