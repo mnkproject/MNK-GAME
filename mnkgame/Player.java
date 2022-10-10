@@ -192,15 +192,28 @@ public class Player implements MNKPlayer {
          * }
          */
 
-         
         // FIXME: la board non è aggiornata con le mosse dei due giocatori
 
+        // Update board with marked cells
+        for (MNKCell cell : MC) {
+            if (cell.state == MNKCellState.P1) {
+                myBoard.B[cell.i][cell.j] = MNKCellState.P1;
+            } else {
+                myBoard.B[cell.i][cell.j] = MNKCellState.P2;
+            }
+        }
 
-        System.out.println(myBoard.M + " " + myBoard.N + " " + myBoard.K);
+        System.out.println("\n\nM: " + myBoard.M + ", N: " + myBoard.N + ", K: " + myBoard.K);
         // print myBoard
         for (int i = 0; i < myBoard.M; i++) {
             for (int j = 0; j < myBoard.N; j++) {
-                System.out.print(myBoard.B[i][j] + " ");
+                if (myBoard.B[i][j] == MNKCellState.FREE) {
+                    System.out.print("0 ");
+                } else if (myBoard.B[i][j] == MNKCellState.P1) {
+                    System.out.print("1 ");
+                } else {
+                    System.out.print("2 ");
+                }
             }
             System.out.println();
         }
