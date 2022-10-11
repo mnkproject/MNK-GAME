@@ -83,13 +83,51 @@ public class Player implements MNKPlayer {
         this.myBoard = new Board(M, N, K);
     }
 
+    // Evaluate the board
+    private int evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
+        // Check if the board is full
+        if (FC.length == 0) {
+            return 0;
+        }
+
+        // Check if the board is empty
+        if (MC.length == 0) {
+            return rand.nextInt(FC.length); // Randomly choose the first cell
+            /*
+             * FIXME:we can improve this by choosing the cell with the highest number of
+             * possible
+             * winning lines
+             */
+        }
+
+        // Check if board has a winner and determine it
+        if (FC.length == 1) {
+            // there is a winner
+            if (FC[0].state == MNKCellState.P1) {
+                return Integer.MAX_VALUE; // P1 wins -> P2 loses //TODO: check if return is correct
+            } else {
+                return Integer.MIN_VALUE; // P2 wins -> P1 loses
+            }
+        }
+
+        //Check rows
+        /*int[] markedCells_row = new int[M];
+        for(MNKCell cell: FC){
+            //Check if there is at least one marked cell in the row
+            
+        }*/
+
+        return 6969;
+
+    }
+
     // AlphaBeta algorithm
     public int AlphaBeta(MNKCell[] FC, MNKCell[] MC, boolean isMaximizingPlayer, int alpha, int beta, int depth,
             int freeCells) {
         // System.out.println("AlphaBeta: depth = " + depth);
         if (depth == 0 || freeCells == 0) {
             // System.out.println("ORA ESCO\n");
-            return 69;// TODO evaluate(); DEVO FARE UNA FUNZIONE CHE VALUTA LA BOARD
+            return evaluateBoard(FC, MC);// TODO evaluate(); DEVO FARE UNA FUNZIONE CHE VALUTA LA BOARD
         }
 
         if (isMaximizingPlayer) {
