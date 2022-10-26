@@ -37,6 +37,124 @@ public class Player implements MNKPlayer {
     private int timeout_in_secs;
     private Board myBoard;
 
+
+    //FIXME TOGLIERE ALBERO
+    public class GameTree {
+        private class Node {
+            Node parent = null;
+            Node leftChild = null;
+            Node rightChild = null;
+
+            int depth;
+            int score;
+            int i, j; // position of the move that led to this node
+            MNKCellState player; // player who is playing in this node
+
+            public Node(Node parent, int depth, int i, int j, MNKCellState player) {
+                this.parent = parent;
+                this.depth = depth;
+                this.i = i;
+                this.j = j;
+                this.player = player;
+            }
+
+            public Node getLeftChild() {
+                return leftChild;
+            }
+
+            public Node getRightChild() {
+                return rightChild;
+            }
+
+            public Node getParent() {
+                return parent;
+            }
+
+            public int getDepth() {
+                return depth;
+            }
+
+            public int getScore() {
+                return score;
+            }
+
+            public int getI() {
+                return i;
+            }
+
+            public int getJ() {
+                return j;
+            }
+
+            public MNKCellState getPlayer() {
+                return player;
+            }
+
+            public void setLeftChild(Node leftChild) {
+                this.leftChild = leftChild;
+            }
+
+            public void setRightChild(Node rightChild) {
+                this.rightChild = rightChild;
+            }
+
+            public void setParent(Node parent) {  
+                this.parent = parent;
+            }
+
+            public void setDepth(int depth) {
+                this.depth = depth;
+            }
+
+            public void setScore(int score) {
+                this.score = score;
+            }
+
+            public void setI(int i) {
+                this.i = i;
+            }
+
+            public void setJ(int j) {
+                this.j = j;
+            }
+
+            public void setPlayer(MNKCellState player) {
+                this.player = player;
+            }
+
+            public boolean isLeaf() {
+                return (leftChild == null && rightChild == null);
+            }
+
+            public boolean isRoot() {
+                return parent == null;
+            }
+
+            public boolean isLeftChild() {
+                return parent.leftChild == this;
+            }
+
+            public boolean isRightChild() {
+                return parent.rightChild == this;
+            }
+
+            public boolean hasLeftChild() {
+                return leftChild != null;
+            }
+
+            public boolean hasRightChild() {
+                return rightChild != null;
+            }
+
+            public boolean hasChildren() {
+                return hasLeftChild() || hasRightChild();
+            }
+
+            
+
+        }
+    }
+
     // Board
     private class Board extends MNKBoard {
         public Board(int M, int N, int K) {
@@ -84,6 +202,7 @@ public class Player implements MNKPlayer {
     }
 
     // Evaluate the board
+    //TODO DA IMPLEMENTARE il fatto che devo vedere celle adiacenti. prima scelta è al centro!
     private int evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
         // Check if the board is full
         if (FC.length == 0) {
@@ -110,12 +229,14 @@ public class Player implements MNKPlayer {
             }
         }
 
-        //Check rows
-        /*int[] markedCells_row = new int[M];
-        for(MNKCell cell: FC){
-            //Check if there is at least one marked cell in the row
-            
-        }*/
+        // Check rows
+        /*
+         * int[] markedCells_row = new int[M];
+         * for(MNKCell cell: FC){
+         * //Check if there is at least one marked cell in the row
+         * 
+         * }
+         */
 
         return 6969;
 
