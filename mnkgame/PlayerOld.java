@@ -29,7 +29,7 @@ import java.util.Stack;
 /**
  * Totally random software player.
  */
-public class Player implements MNKPlayer {
+public class PlayerOld implements MNKPlayer {
     private Random rand;
     private int TIMEOUT;
     private int M, N, K, minNM;
@@ -175,7 +175,7 @@ public class Player implements MNKPlayer {
     /*
      * Default empty constructor
      */
-    public Player() {
+    public PlayerOld() {
     }
 
     public void initPlayer(int M, int N, int K, boolean first, int timeout_in_secs) {
