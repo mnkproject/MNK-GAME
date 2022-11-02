@@ -83,13 +83,19 @@ public class MyPlayer implements MNKPlayer {
         this.myBoard = new Board(M, N, K);
     }
 
+    private void printCell(MNKCell cell) {
+        System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state + ")");
+    }
+
     // Evaluate the board
-    // TODO DA IMPLEMENTARE il fatto che devo vedere celle adiacenti. prima scelta è
-    // al centro!
-    private int evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
-
-        return 6969;
-
+    private void evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
+        // print cells
+        for (MNKCell cell : MC) {
+            printCell(cell);
+        }
+        for (MNKCell cell : FC) {
+            printCell(cell);
+        }
     }
 
     /**
@@ -105,15 +111,11 @@ public class MyPlayer implements MNKPlayer {
          * }
          */
 
-        MNKCell bestCell = null;
+        evaluateBoard(FC, MC);
 
-        /*
-         * bestCell.i = rand.nextInt(M);
-         * bestCell.j = rand.nextInt(N);
-         * bestCell.state = first ? MNKCellState.P1 : MNKCellState.P2;
-         */
+        MNKCell bestCell = null;
         bestCell = FC[0];
-        System.out.println(bestCell.i + " " + bestCell.j+", "+bestCell.state);
+        System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state);
 
         return bestCell;
     }
@@ -122,83 +124,4 @@ public class MyPlayer implements MNKPlayer {
         return "Il mio player";
     }
 
-    // region Algorithms for the game tree
-    // AlphaBeta algorithm
-    public int AlphaBeta(MNKCell[] FC, MNKCell[] MC, boolean isMaximizingPlayer, int alpha, int beta, int depth,
-            int freeCells) {
-        // System.out.println("AlphaBeta: depth = " + depth);
-        if (depth == 0 || freeCells == 0) {
-            // System.out.println("ORA ESCO\n");
-            return evaluateBoard(FC, MC);// TODO evaluate(); DEVO FARE UNA FUNZIONE CHE VALUTA LA BOARD
-        }
-
-        if (isMaximizingPlayer) {
-            int bestValue = Integer.MIN_VALUE;
-            for (MNKCell cell : FC) {
-                myBoard.setCellState(cell.i, cell.j, MNKCellState.P1); // mark cell as visited by P1
-                int value = AlphaBeta(FC, MC, false, alpha, beta, depth - 1, freeCells - 1);
-                myBoard.setCellState(cell.i, cell.j, MNKCellState.FREE); // unmark cell
-                bestValue = Math.max(bestValue, value);
-                if (beta <= alpha)
-                    break;
-            }
-            return bestValue;
-        } else {
-            int bestValue = Integer.MAX_VALUE;
-            for (MNKCell cell : FC) {
-                myBoard.setCellState(cell.i, cell.j, MNKCellState.P2); // mark cell as visited by P2
-                freeCells -= 1;
-                int value = AlphaBeta(FC, MC, true, alpha, beta, depth - 1, freeCells - 1);
-                myBoard.setCellState(cell.i, cell.j, MNKCellState.FREE); // unmark cell
-                bestValue = Math.min(bestValue, value);
-                if (beta <= alpha)
-                    break;
-            }
-            return bestValue;
-        }
-
-    }
-
-    // minimax algorithm
-    public int miniMax(MNKCell[] FC, MNKCell[] MC, boolean isMaximizingPlayer, int depth) {
-
-        /*
-         * if (isMaximizingPlayer) {
-         * System.out.println("\n\nMINIMAX - Massimizzo\n**********");
-         * int bestScore = Integer.MIN_VALUE;
-         * for (int i = 0; i < this.M; i++) {
-         * for (int j = 0; j < this.N; j++) {
-         * // check if the cell is empty
-         * if (myBoard.B[i][j] == MNKCellState.FREE) {
-         * myBoard.B[i][j] = MNKCellState.P1;// mark the cell as P1
-         * System.out.println("MINIMAX - Marked cell (" + i + "," + j + ") as P1");
-         * System.out.println("MINIMAX - Calling minimax with depth = " + (depth - 1));
-         * int score = miniMax(FC, MC, false, depth - 1);
-         * myBoard.B[i][j] = MNKCellState.FREE;// unmark the cell
-         * bestScore = Math.max(score, bestScore);// get the best score
-         * }
-         * }
-         * }
-         * return bestScore;
-         * } else {
-         * System.out.println("\n\nMINIMAX - Minimizzo\n**********");
-         * int bestScore = Integer.MAX_VALUE;
-         * for (int i = 0; i < this.M; i++) {
-         * for (int j = 0; j < this.N; j++) {
-         * // check if the cell is empty
-         * if (myBoard.B[i][j] == MNKCellState.FREE) {
-         * myBoard.B[i][j] = MNKCellState.P2;// mark the cell as P2
-         * System.out.println("MINIMAX - Marked cell (" + i + "," + j + ") as P2");
-         * System.out.println("MINIMAX - Calling minimax with depth = " + (depth - 1));
-         * int score = miniMax(FC, MC, true, depth - 1);
-         * myBoard.B[i][j] = MNKCellState.FREE;// unmark the cell
-         * bestScore = Math.min(score, bestScore);// get the best score
-         * }
-         * }
-         * }
-         * return bestScore;
-         * }
-         */
-        return 69;
-    }
 }
