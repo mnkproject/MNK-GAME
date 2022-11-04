@@ -23,6 +23,7 @@
 package mnkgame;
 
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
 
@@ -87,15 +88,64 @@ public class MyPlayer implements MNKPlayer {
         System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state + ")");
     }
 
+    private void printCell(MNKCell cell, int value) {
+        System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state + "), value: " + value);
+    }
+
     // Evaluate the board
-    private void evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
+    private HashMap<MNKCell, Integer> evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
+        // cell values are in this range (int)[0, 100].
+        // 0 means that the cell is not interesting at all
+        // 100 means that the cell is a winning move
+        // values in between are used to assign a value to its cell
+
         // print cells
         for (MNKCell cell : MC) {
-            printCell(cell);
+            // printCell(cell);
         }
         for (MNKCell cell : FC) {
-            printCell(cell);
+            // printCell(cell);
         }
+
+        HashMap<MNKCell, Integer> freeCellValues = new HashMap<MNKCell, Integer>();
+
+        // initialize freeCellValues with FC to 0
+        for (MNKCell cell : FC) {
+            freeCellValues.put(cell, 0);
+        }
+
+        System.out.println("************** CELLE APPENA INIZIALIZZATE **************");
+        freeCellValues.forEach((cell, value) -> {
+            printCell(cell, value);
+        });
+
+        // check if it is first move in the game
+        if (MC.length == 0) {
+            // if it is first move, choose a cell in the middle of the board
+            int i = (int) Math.floor(M / 2);
+            int j = (int) Math.floor(N / 2);
+            MNKCell bestCell = new MNKCell(i, j, MNKCellState.FREE); // we know it is free because this is the very
+                                                                     // first move
+            freeCellValues.put(bestCell, 99);
+        }
+
+        // now we need to assign a value to each free cell
+        // we will use the Manhattan distance to the closest cell of the opponent
+        // the closer the cell is, the higher the value
+        // Manhattan formula is d = |x1-x2| + |y1-y2|
+        for (MNKCell freeCell : freeCellValues.keySet()) {
+            for (MNKCell markedCell : MC) {
+                int d = Math.abs(freeCell.i - markedCell.i) + Math.abs(freeCell.j - markedCell.j);
+                freeCellValues.put(freeCell, d);
+            }
+        }
+
+        System.out.println("************** MANHATTAN **************");
+        freeCellValues.forEach((cell, value) -> {
+            printCell(cell, value);
+        });
+
+        return freeCellValues;
     }
 
     /**
@@ -111,11 +161,22 @@ public class MyPlayer implements MNKPlayer {
          * }
          */
 
-        evaluateBoard(FC, MC);
+        HashMap<MNKCell, Integer> evaluatedCells = evaluateBoard(FC, MC);
 
         MNKCell bestCell = null;
-        bestCell = FC[0];
-        System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state+"\n\n");
+
+        // search for the best cell in evaluatedCells
+        for (MNKCell cell : evaluatedCells.keySet()) {
+            if (bestCell == null) { // first iteration
+                bestCell = cell;
+            } else {
+                if (evaluatedCells.get(cell) > evaluatedCells.get(bestCell)) {// check if new cell has a higher value
+                    bestCell = cell;
+                }
+            }
+        }
+        
+        System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state + "\n\n");
 
         return bestCell;
     }
