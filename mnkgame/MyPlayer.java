@@ -89,20 +89,54 @@ public class MyPlayer implements MNKPlayer {
     }
 
     private void printCell(MNKCell cell, int value) {
-        //System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state + "), value: " + value);
+        // System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state +
+        // "), value: " + value);
 
-        //let's simulate the board
+        // let's simulate the board
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) {
                 if (i == cell.i && j == cell.j) {
                     System.out.print("[" + value + "]");
                 } else {
-                    System.out.print("[" + myBoard.getCellState(i, j) + "]");
+                    if (myBoard.getCellState(i, j) == MNKCellState.FREE) {
+                        System.out.print("[ ]");
+                    } else if (myBoard.getCellState(i, j) == MNKCellState.P1) {
+                        System.out.print("[X]");
+                    } else {
+                        System.out.print("[O]");
+                    }
                 }
             }
             System.out.println();
         }
         System.out.println();
+    }
+
+    private void printBoardValues(HashMap<MNKCell, Integer> boardValues) {
+        // print board with values
+        // store values in a matrix
+        int[][] values = new int[M][N];
+        for (MNKCell cell : boardValues.keySet()) {
+            values[cell.i][cell.j] = boardValues.get(cell);
+        }
+
+        // let's simulate the board
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                // System.out.print("[" + values[i][j] + "]");
+                // justify the values
+                if (values[i][j] < 10) {
+                    System.out.print("[ " + values[i][j] + " ]");
+                } else if (values[i][j] < 100) {
+                    System.out.print("[ " + values[i][j] + "]");
+                } else {
+                    System.out.print("[" + values[i][j] + "]");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+
     }
 
     // Evaluate the board
@@ -129,8 +163,10 @@ public class MyPlayer implements MNKPlayer {
 
         System.out.println("************** CELLE APPENA INIZIALIZZATE **************");
         freeCellValues.forEach((cell, value) -> {
-            printCell(cell, value);
+            // printCell(cell, value);
         });
+
+        printBoardValues(freeCellValues);
 
         // check if it is first move in the game
         if (MC.length == 0) {
@@ -155,8 +191,10 @@ public class MyPlayer implements MNKPlayer {
 
         System.out.println("************** MANHATTAN **************");
         freeCellValues.forEach((cell, value) -> {
-            printCell(cell, value);
+            // printCell(cell, value);
         });
+
+        printBoardValues(freeCellValues);
 
         return freeCellValues;
     }
