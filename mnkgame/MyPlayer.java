@@ -141,6 +141,8 @@ public class MyPlayer implements MNKPlayer {
 
     // Evaluate the board
     private HashMap<MNKCell, Integer> evaluateBoard(MNKCell[] FC, MNKCell[] MC) {
+        final int MAX_VALUE = 100;
+        final int MIN_VALUE = 0;
         // cell values are in this range (int)[0, 100].
         // 0 means that the cell is not interesting at all
         // 100 means that the cell is a winning move
@@ -175,7 +177,7 @@ public class MyPlayer implements MNKPlayer {
             int j = (int) Math.floor(N / 2);
             MNKCell bestCell = new MNKCell(i, j, MNKCellState.FREE); // we know it is free because this is the very
                                                                      // first move
-            freeCellValues.put(bestCell, 99);
+            freeCellValues.put(bestCell, MAX_VALUE - 1);// MAX_VALUE-1 because it is not the winning move
         }
 
         // now we need to assign a value to each free cell
@@ -185,7 +187,8 @@ public class MyPlayer implements MNKPlayer {
         for (MNKCell freeCell : freeCellValues.keySet()) {
             for (MNKCell markedCell : MC) {
                 int d = Math.abs(freeCell.i - markedCell.i) + Math.abs(freeCell.j - markedCell.j);
-                freeCellValues.put(freeCell, d);
+                int value = MAX_VALUE - d;
+                freeCellValues.put(freeCell, value);
             }
         }
 
@@ -203,7 +206,7 @@ public class MyPlayer implements MNKPlayer {
      * Selects the best cell in <code>FC</code>
      */
     public MNKCell selectCell(MNKCell[] FC, MNKCell[] MC) {
-        // Uncomment to chech the move timeout
+        // Uncomment to check the move timeout
         /*
          * try {
          * Thread.sleep(1000*2*TIMEOUT);
