@@ -89,7 +89,20 @@ public class MyPlayer implements MNKPlayer {
     }
 
     private void printCell(MNKCell cell, int value) {
-        System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state + "), value: " + value);
+        //System.out.println("Cell: (" + cell.i + ", " + cell.j + ", " + cell.state + "), value: " + value);
+
+        //let's simulate the board
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                if (i == cell.i && j == cell.j) {
+                    System.out.print("[" + value + "]");
+                } else {
+                    System.out.print("[" + myBoard.getCellState(i, j) + "]");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
     // Evaluate the board
@@ -175,7 +188,7 @@ public class MyPlayer implements MNKPlayer {
                 }
             }
         }
-        
+
         System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state + "\n\n");
 
         return bestCell;
