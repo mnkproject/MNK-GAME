@@ -115,7 +115,7 @@ public class MyPlayer implements MNKPlayer {
 
         MNKCell bestCell = null;
         bestCell = FC[0];
-        System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state);
+        System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state+"\n\n");
 
         return bestCell;
     }
