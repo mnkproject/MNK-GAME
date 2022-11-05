@@ -77,9 +77,11 @@ public class MyPlayer implements MNKPlayer {
         public boolean isWinningMove(MNKCell cell, MNKGameState winningPlayer) {
             System.out.println("Checking if " + cell + " is a winning move...");
             MNKGameState state = markCell(cell.i, cell.j);
-            unmarkCell();
+             unmarkCell();
             System.out.println("State: " + state);
             return winningPlayer == state;
+
+            
         }
 
     }
@@ -252,8 +254,8 @@ public class MyPlayer implements MNKPlayer {
             if (myBoard.isWinningMove(freeCell, MNKGameState.WINP2)) {// check if it is a winning move for P2 (O), the
                                                                       // opponent
                 System.out.println("************** CELLA VINCENTE PER L'AVVERSARIO P2 **************");
-                printCell(freeCell, MAX_VALUE );
-                freeCellValues.put(freeCell, MAX_VALUE );
+                printCell(freeCell, MAX_VALUE);
+                freeCellValues.put(freeCell, MAX_VALUE);
 
                 printBoardValues(freeCellValues, MC);
                 return freeCellValues;
@@ -268,18 +270,19 @@ public class MyPlayer implements MNKPlayer {
         // the closer the cell is, the higher the value
         // Manhattan formula is d = |x1-x2| + |y1-y2|
         /*
-        for (MNKCell freeCell : freeCellValues.keySet()) {
-            for (MNKCell markedCell : MC) {
-                int d = Math.abs(freeCell.i - markedCell.i) + Math.abs(freeCell.j - markedCell.j);
-                int value = MAX_VALUE / (d + 10);
-                freeCellValues.put(freeCell, value);
-            }
-        }
-
-        System.out.println("************** MANHATTAN **************");
-
-        printBoardValues(freeCellValues, MC);
-        */
+         * for (MNKCell freeCell : freeCellValues.keySet()) {
+         * for (MNKCell markedCell : MC) {
+         * int d = Math.abs(freeCell.i - markedCell.i) + Math.abs(freeCell.j -
+         * markedCell.j);
+         * int value = MAX_VALUE / (d + 10);
+         * freeCellValues.put(freeCell, value);
+         * }
+         * }
+         * 
+         * System.out.println("************** MANHATTAN **************");
+         * 
+         * printBoardValues(freeCellValues, MC);
+         */
 
         return freeCellValues;
     }
