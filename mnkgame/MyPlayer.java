@@ -38,6 +38,25 @@ public class MyPlayer implements MNKPlayer {
     private int timeout_in_secs;
     private Board myBoard;
 
+    // Terminal colors
+    public final String ANSI_RESET = "\u001B[0m";
+    public final String ANSI_BLACK = "\u001B[30m";
+    public final String ANSI_RED = "\u001B[31m";
+    public final String ANSI_GREEN = "\u001B[32m";
+    public final String ANSI_YELLOW = "\u001B[33m";
+    public final String ANSI_BLUE = "\u001B[34m";
+    public final String ANSI_PURPLE = "\u001B[35m";
+    public final String ANSI_CYAN = "\u001B[36m";
+    public final String ANSI_WHITE = "\u001B[37m";
+    public final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
+    public final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    public final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    public final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    public final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    public final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+    public final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+
     // Board
     private class Board extends MNKBoard {
         public Board(int M, int N, int K) {
@@ -112,7 +131,8 @@ public class MyPlayer implements MNKPlayer {
         System.out.println();
     }
 
-    private void printBoardValues(HashMap<MNKCell, Integer> boardValues) {
+    private void printBoardValues(HashMap<MNKCell, Integer> boardValues, MNKCell[] MC) {
+
         // print board with values
         // store values in a matrix
         int[][] values = new int[M][N];
@@ -123,15 +143,33 @@ public class MyPlayer implements MNKPlayer {
         // let's simulate the board
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) {
+                boolean markedCell = false;
+
+                // print marked cells
+                for (MNKCell cell : MC) {
+                    if (cell.i == i && cell.j == j) {
+                        markedCell = true;
+                        if (cell.state == MNKCellState.P1) {
+                            System.out.print("[ " + ANSI_RED + "X" + ANSI_RESET + " ]");
+                        } else {
+                            System.out.print("[ " + ANSI_BLUE + "O" + ANSI_RESET + " ]");
+                        }
+                    }
+                }
+
+                // print free cells
                 // System.out.print("[" + values[i][j] + "]");
                 // justify the values
-                if (values[i][j] < 10) {
-                    System.out.print("[ " + values[i][j] + " ]");
-                } else if (values[i][j] < 100) {
-                    System.out.print("[ " + values[i][j] + "]");
-                } else {
-                    System.out.print("[" + values[i][j] + "]");
+                if (!markedCell) {
+                    if (values[i][j] < 10) {
+                        System.out.print("[ " + values[i][j] + " ]");
+                    } else if (values[i][j] < 100) {
+                        System.out.print("[ " + values[i][j] + "]");
+                    } else {
+                        System.out.print("[" + values[i][j] + "]");
+                    }
                 }
+
             }
             System.out.println();
         }
@@ -168,7 +206,7 @@ public class MyPlayer implements MNKPlayer {
             // printCell(cell, value);
         });
 
-        printBoardValues(freeCellValues);
+        printBoardValues(freeCellValues, MC);
 
         // check if it is first move in the game
         if (MC.length == 0) {
@@ -187,7 +225,7 @@ public class MyPlayer implements MNKPlayer {
         for (MNKCell freeCell : freeCellValues.keySet()) {
             for (MNKCell markedCell : MC) {
                 int d = Math.abs(freeCell.i - markedCell.i) + Math.abs(freeCell.j - markedCell.j);
-                int value = MAX_VALUE - d;
+                int value = MAX_VALUE / (d + 10);
                 freeCellValues.put(freeCell, value);
             }
         }
@@ -197,7 +235,7 @@ public class MyPlayer implements MNKPlayer {
             // printCell(cell, value);
         });
 
-        printBoardValues(freeCellValues);
+        printBoardValues(freeCellValues, MC);
 
         return freeCellValues;
     }
