@@ -72,6 +72,16 @@ public class MyPlayer implements MNKPlayer {
         public void setCellState(int i, int j, MNKCellState state) {
             super.B[i][j] = state;
         }
+
+        // tells if the marked cell is a winning move
+        public boolean isWinningMove(MNKCell cell, MNKGameState winningPlayer) {
+            System.out.println("Checking if " + cell + " is a winning move...");
+            MNKGameState state = markCell(cell.i, cell.j);
+            unmarkCell();
+            System.out.println("State: " + state);
+            return winningPlayer == state;
+        }
+
     }
 
     /*
@@ -183,7 +193,7 @@ public class MyPlayer implements MNKPlayer {
         final int MIN_VALUE = 0;
         // cell values are in this range (int)[0, 100].
         // 0 means that the cell is not interesting at all
-        // 100 means that the cell is a winning move
+        // 100 means that the cell is a winning move or stops the opponent from winning
         // values in between are used to assign a value to its cell
 
         // print cells
@@ -208,6 +218,9 @@ public class MyPlayer implements MNKPlayer {
 
         printBoardValues(freeCellValues, MC);
 
+        /*
+         * CHECK FIRST MOVE ************************************************
+         */
         // check if it is first move in the game
         if (MC.length == 0) {
             // if it is first move, choose a cell in the middle of the board
@@ -218,10 +231,43 @@ public class MyPlayer implements MNKPlayer {
             freeCellValues.put(bestCell, MAX_VALUE - 1);// MAX_VALUE-1 because it is not the winning move
         }
 
+        /*
+         * CHECK WINNING MOVES ************************************************
+         */
+        // Check if there are cells that are winning, or draw moves
+        // If there are, assign them the maximum value
+        for (MNKCell freeCell : freeCellValues.keySet()) {
+            // check my winning moves
+            if (myBoard.isWinningMove(freeCell, MNKGameState.WINP1)) {// check if it is a winning move for P1 (X), my
+                                                                      // player
+                System.out.println("************** CELLA VINCENTE P1 **************");
+                printCell(freeCell, MAX_VALUE);
+                freeCellValues.put(freeCell, MAX_VALUE);
+
+                printBoardValues(freeCellValues, MC);
+                return freeCellValues;
+            }
+
+            // check opponent winning moves (we need to stop them)
+            if (myBoard.isWinningMove(freeCell, MNKGameState.WINP2)) {// check if it is a winning move for P2 (O), the
+                                                                      // opponent
+                System.out.println("************** CELLA VINCENTE PER L'AVVERSARIO P2 **************");
+                printCell(freeCell, MAX_VALUE );
+                freeCellValues.put(freeCell, MAX_VALUE );
+
+                printBoardValues(freeCellValues, MC);
+                return freeCellValues;
+            }
+        }
+
+        /*
+         * MANHATTAN ************************************************
+         */
         // now we need to assign a value to each free cell
         // we will use the Manhattan distance to the closest cell of the opponent
         // the closer the cell is, the higher the value
         // Manhattan formula is d = |x1-x2| + |y1-y2|
+        /*
         for (MNKCell freeCell : freeCellValues.keySet()) {
             for (MNKCell markedCell : MC) {
                 int d = Math.abs(freeCell.i - markedCell.i) + Math.abs(freeCell.j - markedCell.j);
@@ -231,11 +277,9 @@ public class MyPlayer implements MNKPlayer {
         }
 
         System.out.println("************** MANHATTAN **************");
-        freeCellValues.forEach((cell, value) -> {
-            // printCell(cell, value);
-        });
 
         printBoardValues(freeCellValues, MC);
+        */
 
         return freeCellValues;
     }
