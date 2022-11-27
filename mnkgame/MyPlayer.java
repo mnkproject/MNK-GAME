@@ -23,6 +23,7 @@
 package mnkgame;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
@@ -73,17 +74,41 @@ public class MyPlayer implements MNKPlayer {
             super.B[i][j] = state;
         }
 
-        // tells if the marked cell is a winning move
-        public boolean isWinningMove(MNKCell cell, MNKGameState winningPlayer) {
-            System.out.println("Checking if " + cell + " is a winning move...");
-            MNKGameState state = markCell(cell.i, cell.j);
-             unmarkCell();
-            System.out.println("State: " + state);
-            return winningPlayer == state;
+        private void updateMarkedCells(MNKCell newMarkedCell) {
+            myBoard.markCell(newMarkedCell.i, newMarkedCell.j);
 
-            
         }
 
+    }
+
+    // tells if the marked cell is a winning move
+    public boolean isWinningMove(MNKCell cell, MNKGameState winningPlayer) {
+        /*
+         * System.out.println("Checking if " + cell + " is a winning move...");
+         * MNKGameState state = markCell(cell.i, cell.j);
+         * // print MC
+         * System.out.println("************* MC before unmark:");
+         * for (MNKCell c : MC) {
+         * printCell(c);
+         * }
+         * unmarkCell();
+         * System.out.println("************* MC after unmark:");
+         * for (MNKCell c : MC) {
+         * printCell(c);
+         * }
+         * System.out.println("State: " + state);
+         * 
+         * return winningPlayer == state;
+         */
+
+        MNKGameState state = myBoard.markCell(cell.i, cell.j);
+        System.out.println("Checking if " + cell + " is a winning move...");
+        System.out.println("State: " + state);
+        System.out.println("Size after marking: " + myBoard.getMarkedCells().length);
+        myBoard.unmarkCell();
+        System.out.println("Size after unmarking: " + myBoard.getMarkedCells().length);
+
+        return winningPlayer == state;
     }
 
     /*
@@ -221,6 +246,13 @@ public class MyPlayer implements MNKPlayer {
         printBoardValues(freeCellValues, MC);
 
         /*
+         * System.out.println("_____________DEBUG_____________");
+         * for (MNKCell cell : MC) {
+         * printCell(cell);
+         * }
+         */
+
+        /*
          * CHECK FIRST MOVE ************************************************
          */
         // check if it is first move in the game
@@ -238,28 +270,34 @@ public class MyPlayer implements MNKPlayer {
          */
         // Check if there are cells that are winning, or draw moves
         // If there are, assign them the maximum value
-        for (MNKCell freeCell : freeCellValues.keySet()) {
+        for (MNKCell cell : freeCellValues.keySet()) {
             // check my winning moves
-            if (myBoard.isWinningMove(freeCell, MNKGameState.WINP1)) {// check if it is a winning move for P1 (X), my
-                                                                      // player
+
+            if (isWinningMove(cell, MNKGameState.WINP1)) {// check if it is a winning move for P1 (X), my player
                 System.out.println("************** CELLA VINCENTE P1 **************");
-                printCell(freeCell, MAX_VALUE);
-                freeCellValues.put(freeCell, MAX_VALUE);
+                printCell(cell, MAX_VALUE);
+                freeCellValues.put(cell, MAX_VALUE);
 
                 printBoardValues(freeCellValues, MC);
                 return freeCellValues;
             }
 
             // check opponent winning moves (we need to stop them)
-            if (myBoard.isWinningMove(freeCell, MNKGameState.WINP2)) {// check if it is a winning move for P2 (O), the
-                                                                      // opponent
+            if (isWinningMove(cell, MNKGameState.WINP2)) {// check if it is a winning move for P2 (O), the opponent
                 System.out.println("************** CELLA VINCENTE PER L'AVVERSARIO P2 **************");
-                printCell(freeCell, MAX_VALUE);
-                freeCellValues.put(freeCell, MAX_VALUE);
+                printCell(cell, MAX_VALUE);
+                freeCellValues.put(cell, MAX_VALUE);
 
                 printBoardValues(freeCellValues, MC);
                 return freeCellValues;
             }
+
+        }
+
+        for (MNKCell cell : FC) {
+            // idea: non può funzionare perche cell sarà sempre free essendo dentro a FC e
+            // iterato nel for
+
         }
 
         /*
@@ -269,6 +307,7 @@ public class MyPlayer implements MNKPlayer {
         // we will use the Manhattan distance to the closest cell of the opponent
         // the closer the cell is, the higher the value
         // Manhattan formula is d = |x1-x2| + |y1-y2|
+
         /*
          * for (MNKCell freeCell : freeCellValues.keySet()) {
          * for (MNKCell markedCell : MC) {
@@ -280,9 +319,10 @@ public class MyPlayer implements MNKPlayer {
          * }
          * 
          * System.out.println("************** MANHATTAN **************");
-         * 
-         * printBoardValues(freeCellValues, MC);
          */
+
+        System.out.println("************** CELLE VALORE FINALE **************");
+        printBoardValues(freeCellValues, MC);
 
         return freeCellValues;
     }
@@ -299,6 +339,13 @@ public class MyPlayer implements MNKPlayer {
          * catch(Exception e) {
          * }
          */
+
+        // first of all we need to update OUR board with the new move
+        // get new move, from MNKBoard.java we know that the new move is in the MC tail
+        // (the last element)
+        if (MC.length > 0) { // we do that only if it is not the first move
+            myBoard.updateMarkedCells(MC[MC.length - 1]);
+        }
 
         HashMap<MNKCell, Integer> evaluatedCells = evaluateBoard(FC, MC);
 
@@ -317,6 +364,10 @@ public class MyPlayer implements MNKPlayer {
 
         System.out.println("Best cell: " + bestCell.i + " " + bestCell.j + ", " + bestCell.state + "\n\n");
 
+        // before returning the best cell, we need to update our board
+        myBoard.updateMarkedCells(bestCell);
+
+        // return the best cell
         return bestCell;
     }
 
