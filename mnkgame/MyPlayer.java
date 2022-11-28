@@ -83,30 +83,13 @@ public class MyPlayer implements MNKPlayer {
 
     // tells if the marked cell is a winning move
     public boolean isWinningMove(MNKCell cell, MNKGameState winningPlayer) {
-        /*
-         * System.out.println("Checking if " + cell + " is a winning move...");
-         * MNKGameState state = markCell(cell.i, cell.j);
-         * // print MC
-         * System.out.println("************* MC before unmark:");
-         * for (MNKCell c : MC) {
-         * printCell(c);
-         * }
-         * unmarkCell();
-         * System.out.println("************* MC after unmark:");
-         * for (MNKCell c : MC) {
-         * printCell(c);
-         * }
-         * System.out.println("State: " + state);
-         * 
-         * return winningPlayer == state;
-         */
-
         MNKGameState state = myBoard.markCell(cell.i, cell.j);
-        System.out.println("Checking if " + cell + " is a winning move...");
-        System.out.println("State: " + state);
-        System.out.println("Size after marking: " + myBoard.getMarkedCells().length);
+        // System.out.println("Checking if " + cell + " is a winning move...");
+        // System.out.println("State: " + state);
+        // System.out.println("Size after marking: " + myBoard.getMarkedCells().length);
         myBoard.unmarkCell();
-        System.out.println("Size after unmarking: " + myBoard.getMarkedCells().length);
+        // System.out.println("Size after unmarking: " +
+        // myBoard.getMarkedCells().length);
 
         return winningPlayer == state;
     }
@@ -223,13 +206,15 @@ public class MyPlayer implements MNKPlayer {
         // 100 means that the cell is a winning move or stops the opponent from winning
         // values in between are used to assign a value to its cell
 
-        // print cells
-        for (MNKCell cell : MC) {
-            // printCell(cell);
-        }
-        for (MNKCell cell : FC) {
-            // printCell(cell);
-        }
+        /*
+         * // print cells
+         * for (MNKCell cell : MC) {
+         * printCell(cell);
+         * }
+         * for (MNKCell cell : FC) {
+         * printCell(cell);
+         * }
+         */
 
         HashMap<MNKCell, Integer> freeCellValues = new HashMap<MNKCell, Integer>();
 
@@ -238,12 +223,15 @@ public class MyPlayer implements MNKPlayer {
             freeCellValues.put(cell, 0);
         }
 
-        System.out.println("************** CELLE APPENA INIZIALIZZATE **************");
-        freeCellValues.forEach((cell, value) -> {
-            // printCell(cell, value);
-        });
+        /*
+         * System.out.println("************** CELLE APPENA INIZIALIZZATE **************"
+         * );
+         * freeCellValues.forEach((cell, value) -> {
+         * printCell(cell, value);
+         * });
+         */
 
-        printBoardValues(freeCellValues, MC);
+        // printBoardValues(freeCellValues, MC);
 
         /*
          * System.out.println("_____________DEBUG_____________");
@@ -271,33 +259,27 @@ public class MyPlayer implements MNKPlayer {
         // Check if there are cells that are winning, or draw moves
         // If there are, assign them the maximum value
         for (MNKCell cell : freeCellValues.keySet()) {
-            // check my winning moves
+            // FIXME: a volte non trova la cella vincente (per ora solo riscontrato per l'opponent, ma controlla bene)
 
+            // check my winning moves
             if (isWinningMove(cell, MNKGameState.WINP1)) {// check if it is a winning move for P1 (X), my player
                 System.out.println("************** CELLA VINCENTE P1 **************");
                 printCell(cell, MAX_VALUE);
-                freeCellValues.put(cell, MAX_VALUE);
+                freeCellValues.put(cell, MAX_VALUE); // assign the maximum value to the winning move
 
                 printBoardValues(freeCellValues, MC);
-                return freeCellValues;
+                return freeCellValues; // return the board values, because we found a winning move
             }
 
             // check opponent winning moves (we need to stop them)
             if (isWinningMove(cell, MNKGameState.WINP2)) {// check if it is a winning move for P2 (O), the opponent
                 System.out.println("************** CELLA VINCENTE PER L'AVVERSARIO P2 **************");
                 printCell(cell, MAX_VALUE);
-                freeCellValues.put(cell, MAX_VALUE);
+                freeCellValues.put(cell, MAX_VALUE); // assign the maximum value to the winning move
 
                 printBoardValues(freeCellValues, MC);
-                return freeCellValues;
+                return freeCellValues; // return the board values, because we found a winning move for the opponent
             }
-
-        }
-
-        for (MNKCell cell : FC) {
-            // idea: non può funzionare perche cell sarà sempre free essendo dentro a FC e
-            // iterato nel for
-
         }
 
         /*
